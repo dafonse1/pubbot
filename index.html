@@ -3,51 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preparando o Download...</title>
-
-    <!-- Código de anúncios do Monetag -->
-    <script type="text/javascript" src="https://your-monetag-code.js"></script>
-
-    <script>
-        function mostrarBotao() {
-            document.getElementById("botao-download").style.display = "block";
-        }
-        setTimeout(mostrarBotao, 10000); // O botão aparece após 10 segundos
-    </script>
-
+    <title>Mini App - Biblioteca</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px; }
-        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px 0px #aaa; }
-        .hidden { display: none; }
-        button { padding: 10px 20px; font-size: 18px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background-color: #218838; }
+        body { text-align: center; font-family: Arial, sans-serif; }
+        button { font-size: 20px; padding: 10px; margin: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>O seu download estará disponível em breve...</h2>
-        <p>Aguarde enquanto preparamos o link.</p>
-
-        <!-- Aqui aparece o anúncio do Monetag -->
-        <div id="monetag-ad"></div>
-
-        <!-- Botão de Download (inicialmente escondido) -->
-        <div id="botao-download" class="hidden">
-            <p>✅ O download foi desbloqueado! Clique abaixo para baixar.</p>
-            <a id="download-link" href="#" target="_blank">
-                <button>Baixar Agora</button>
-            </a>
-        </div>
-    </div>
+    <h2>📚 Biblioteca Digital</h2>
+    <p>Para baixar o livro, vê um anúncio primeiro!</p>
+    <button id="watchAd">🔁 Ver Anúncio</button>
+    <p id="status">Aguardando...</p>
+    <a id="downloadLink" href="#" style="display:none;">📥 Baixar Livro</a>
 
     <script>
-        // Obtém o nome do livro da URL e define o link correto
-        const params = new URLSearchParams(window.location.search);
-        const livro = params.get("livro");
-        if (livro) {
-            document.getElementById("download-link").href = `https://mega.nz/${livro}`;
+        const userId = Telegram.WebApp.initDataUnsafe?.user?.id;
+        const ADSGRAM_API_KEY = "SEU_ADSGRAM_API_KEY"; // Obtém da AdsGram
+        const livroSelecionado = "https://teu-servidor.com/livros/exemplo.epub"; // Substituir pelo livro correto
+
+        document.getElementById("watchAd").addEventListener("click", function() {
+            // Abrir AdsGram para exibir anúncio
+            const adUrl = `https://adsgram.ai/show-ad?app_id=SEU_APP_ID&user_id=${userId}`;
+            window.open(adUrl, "_blank");
+
+            // Verifica automaticamente se o anúncio foi visto
+            setTimeout(checkAdStatus, 5000); // Iniciar verificação após 5 segundos
+        });
+
+        function checkAdStatus() {
+            fetch(`https://adsgram.ai/api/check-ad?user_id=${userId}&api_key=${ADSGRAM_API_KEY}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("status").textContent = "✅ Anúncio concluído! Download liberado.";
+                    document.getElementById("downloadLink").href = livroSelecionado;
+                    document.getElementById("downloadLink").style.display = "block";
+                } else {
+                    document.getElementById("status").textContent = "⏳ Aguardando finalização do anúncio...";
+                    setTimeout(checkAdStatus, 3000); // Repetir verificação
+                }
+            })
+            .catch(error => console.error("Erro na verificação do anúncio:", error));
         }
     </script>
-
 </body>
 </html>
