@@ -12,15 +12,26 @@
 </head>
 <body>
     <h2>📚 Biblioteca Digital</h2>
-    <p>Para baixar o livro, vê um anúncio primeiro!</p>
+    <p id="livro-info">Carregando...</p>
     <button id="watchAd">🔁 Ver Anúncio</button>
     <p id="status">Aguardando...</p>
     <a id="downloadLink" href="#" style="display:none;">📥 Baixar Livro</a>
 
     <script>
-        const userId = Telegram.WebApp.initDataUnsafe?.user?.id;
-        const ADSGRAM_API_KEY = "SEU_ADSGRAM_API_KEY"; // Obtém da AdsGram
-        const livroSelecionado = "https://teu-servidor.com/livros/exemplo.epub"; // Substituir pelo livro correto
+        // Função para obter parâmetros da URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const userId = getQueryParam("user_id");
+        const livroSelecionado = getQueryParam("file");
+
+        if (livroSelecionado) {
+            document.getElementById("livro-info").textContent = `Livro: ${livroSelecionado}`;
+        }
+
+        const ADSGRAM_API_KEY = "SEU_ADSGRAM_API_KEY"; // Obtém na AdsGram
 
         document.getElementById("watchAd").addEventListener("click", function() {
             // Abrir AdsGram para exibir anúncio
@@ -37,7 +48,7 @@
             .then(data => {
                 if (data.success) {
                     document.getElementById("status").textContent = "✅ Anúncio concluído! Download liberado.";
-                    document.getElementById("downloadLink").href = livroSelecionado;
+                    document.getElementById("downloadLink").href = `https://teu-servidor.com/livros/${livroSelecionado}`;
                     document.getElementById("downloadLink").style.display = "block";
                 } else {
                     document.getElementById("status").textContent = "⏳ Aguardando finalização do anúncio...";
