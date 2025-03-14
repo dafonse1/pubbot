@@ -3,42 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini App - Biblioteca</title>
+    <title>Biblioteca Digital</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { text-align: center; font-family: Arial, sans-serif; }
         button { font-size: 20px; padding: 10px; margin: 10px; cursor: pointer; }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
     </style>
 </head>
 <body>
-    <h2>📚 Biblioteca Digital</h2>
-    <p id="livro-info">Carregando...</p>
-    <button id="watchAd">🔁 Ver Anúncio</button>
-    <p id="status">Aguardando...</p>
-    <a id="downloadLink" href="#" style="display:none;">📥 Baixar Livro</a>
+    <div class="container">
+        <h1>📚 Biblioteca Digital</h1>
+        <p>Bem-vindo à Biblioteca Digital! Aqui podes encontrar livros gratuitos.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Books-aj.svg_aj_ashton_01.svg" width="200">
+        <p>Para baixar um livro, precisas ver um pequeno anúncio primeiro.</p>
+        <button id="watchAd">🔁 Ver Anúncio</button>
+        <p id="status">Aguardando...</p>
+        <a id="downloadLink" href="#" style="display:none;">📥 Baixar Livro</a>
+    </div>
 
     <script>
-        // Função para obter parâmetros da URL
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
         const userId = getQueryParam("user_id");
-        const livroSelecionado = getQueryParam("file");
+        const livroSelecionado = getQueryParam("file") || "livro_exemplo.epub";
 
-        if (livroSelecionado) {
-            document.getElementById("livro-info").textContent = `Livro: ${livroSelecionado}`;
-        }
-
-        const ADSGRAM_API_KEY = "SEU_ADSGRAM_API_KEY"; // Obtém na AdsGram
+        const ADSGRAM_API_KEY = "TUA_API_KEY";  // Obtém da AdsGram
+        const ADSGRAM_APP_ID = "TEU_APP_ID";   // Obtém da AdsGram
 
         document.getElementById("watchAd").addEventListener("click", function() {
-            // Abrir AdsGram para exibir anúncio
-            const adUrl = `https://adsgram.ai/show-ad?app_id=SEU_APP_ID&user_id=${userId}`;
+            const adUrl = `https://adsgram.ai/show-ad?app_id=${ADSGRAM_APP_ID}&user_id=${userId}`;
             window.open(adUrl, "_blank");
 
-            // Verifica automaticamente se o anúncio foi visto
             setTimeout(checkAdStatus, 5000); // Iniciar verificação após 5 segundos
         });
 
@@ -52,7 +51,7 @@
                     document.getElementById("downloadLink").style.display = "block";
                 } else {
                     document.getElementById("status").textContent = "⏳ Aguardando finalização do anúncio...";
-                    setTimeout(checkAdStatus, 3000); // Repetir verificação
+                    setTimeout(checkAdStatus, 3000);
                 }
             })
             .catch(error => console.error("Erro na verificação do anúncio:", error));
